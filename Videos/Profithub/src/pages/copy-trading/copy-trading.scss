@@ -1,0 +1,397 @@
+@use 'components/shared/styles/constants' as *;
+@use 'components/shared/styles/mixins' as *;
+
+.copy-trading-dashboard {
+    padding: 2.4rem; // Add padding to container so children don't touch edges
+    width: 100%;
+    margin: 0 auto;
+    color: var(--text-general);
+    box-sizing: border-box; // Prevent padding from adding to width
+    min-height: calc(100vh - 80px);
+
+    // Use consistent app background (transparent to show main gradients if any)
+    background: transparent;
+
+    // Header
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 3.2rem;
+        padding-bottom: 1.6rem;
+        border-bottom: 2px solid var(--glass-border);
+
+        .dashboard-title {
+            color: var(--text-prominent);
+            margin-bottom: 0.8rem;
+
+            // Removed forced yellow, using standard text with maybe a subtle gradient text effect if desired
+            // Keeping it clean for now to match Bots title
+        }
+
+        .dashboard-subtitle {
+            color: var(--text-less-prominent);
+            font-size: 1.4rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--glass-background);
+            padding: 0.8rem 1.6rem;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+    }
+
+    // Tabs
+    .dashboard-tabs {
+        display: flex;
+        gap: 2.4rem;
+        margin-bottom: 2.4rem;
+        border-bottom: 1px solid var(--glass-border);
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-less-prominent);
+            font-size: 1.6rem;
+            font-weight: 700;
+            padding-bottom: 1rem;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+
+            &--active {
+                color: #ff9f43; // Matching Automatic Bot Orange
+
+                &:after {
+                    content: '';
+                    position: absolute;
+                    bottom: -1px;
+                    left: 0;
+                    width: 100%;
+                    height: 3px;
+                    background: linear-gradient(90deg, #ff9f43, #ff6b6b); // Gradient underline
+                    border-radius: 3px;
+                }
+            }
+
+            &:hover {
+                color: var(--text-prominent);
+            }
+        }
+    }
+
+    // Sections
+    .dashboard-section {
+        background: var(--glass-background);
+        backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 2.4rem;
+        margin-bottom: 2.4rem;
+        box-shadow: 0 4px 24px rgb(0 0 0 / 5%);
+
+        .section-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 2.4rem;
+        }
+
+        .section-bullet {
+            color: #ff9f43; // Orange bullet
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .section-title {
+            color: var(--text-prominent);
+        }
+    }
+
+    // Inputs
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        margin-bottom: 1.6rem;
+
+        .input-label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-prominent);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 1.2rem;
+        }
+
+        .deriv-input {
+            flex: 1;
+            background: rgb(0 0 0 / 20%); // Semi-transparent dark
+            border: 1px solid var(--glass-border);
+            color: var(--text-prominent);
+            padding: 1.2rem;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            transition: all 0.2s;
+
+            &:focus {
+                border-color: #ff9f43;
+                box-shadow: 0 0 0 2px rgb(255 159 67 / 20%);
+                outline: none;
+            }
+        }
+
+        .add-btn {
+            padding: 0 2.4rem;
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5); // Use Normal Bot Blue for generic actions
+            border: none;
+            color: #fff;
+            border-radius: 12px;
+            font-weight: 700;
+
+            &:hover {
+                box-shadow: 0 4px 12px rgb(0 210 255 / 30%);
+            }
+        }
+
+        .input-hint {
+            color: var(--text-less-prominent);
+            font-style: italic;
+        }
+
+        .error-msg {
+            color: var(--status-danger);
+        }
+    }
+
+    // Mini Tags
+    .connected-accounts-mini {
+        border-top: 1px solid var(--glass-border);
+        padding-top: 1.6rem;
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .account-tag {
+            background: rgb(255 255 255 / 5%);
+            border: 1px solid var(--glass-border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--text-prominent);
+            font-weight: 600;
+        }
+
+        .type-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+
+            &.real {
+                background: #38ef7d;
+                box-shadow: 0 0 5px rgb(56 239 125 / 40%);
+            }
+
+            &.demo {
+                background: #00d2ff;
+            }
+        }
+    }
+
+    // Actions
+    .actions-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2.4rem;
+
+        @include mobile-or-tablet-screen {
+            grid-template-columns: 1fr;
+        }
+
+        .action-btn {
+            padding: 1.8rem;
+            border-radius: 16px;
+            border: none;
+            font-size: 1.6rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+
+            &--start {
+                // Bots "Automatic" Gradient
+                background: linear-gradient(135deg, #ff9f43, #ff6b6b);
+                box-shadow: 0 4px 15px rgb(255 159 67 / 30%);
+
+                &:hover:not(.disabled) {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 25px rgb(255 159 67 / 40%);
+                }
+            }
+
+            &--stop {
+                // Standard Red Gradient
+                background: linear-gradient(135deg, #ff5252, #d32f2f);
+                box-shadow: 0 4px 15px rgb(255 82 82 / 30%);
+
+                &:hover:not(.disabled) {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 25px rgb(255 82 82 / 40%);
+                }
+            }
+
+            &.disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none !important;
+                box-shadow: none !important;
+                filter: grayscale(1);
+            }
+        }
+    }
+
+    // Status Cards
+    .status-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.4rem;
+
+        @include mobile-or-tablet-screen {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .status-card {
+        background: rgb(255 255 255 / 3%);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 2.4rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s;
+
+        &:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--glass-border);
+            transition: all 0.3s;
+        }
+
+        &:hover {
+            background: rgb(255 255 255 / 5%);
+            transform: translateY(-2px);
+
+            &:before {
+                background: #ff9f43;
+                box-shadow: 0 0 10px #ff9f43;
+            }
+        }
+
+        &__header {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+
+        &__title {
+            color: var(--text-prominent);
+            font-weight: 700;
+            font-size: 1.4rem;
+        }
+
+        &__text {
+            color: var(--text-less-prominent);
+            font-size: 1.2rem;
+        }
+    }
+
+    // Status Dots
+    .status-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--text-disabled);
+
+        &--connected {
+            background: #ff9f43; // Orange
+            box-shadow: 0 0 8px #ff9f43;
+        }
+
+        &--disconnected {
+            background: var(--status-danger);
+        }
+
+        &--auth {
+            background: #00d2ff; // Blue
+            box-shadow: 0 0 8px #00d2ff;
+        }
+
+        &--ready {
+            background: #38ef7d; // Green
+            box-shadow: 0 0 8px #38ef7d;
+        }
+    }
+
+    // Console
+    .console-log {
+        background: rgb(0 0 0 / 30%);
+        padding: 1.6rem;
+        border-radius: 12px;
+        border: 1px solid var(--glass-border);
+        max-height: 400px;
+        overflow-y: auto;
+        font-family: 'IBM Plex Mono', monospace; // Use monospace only here
+        font-size: 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .console-line {
+        display: flex;
+        gap: 1.2rem;
+        border-bottom: 1px solid rgb(255 255 255 / 5%);
+        padding-bottom: 0.8rem;
+        color: var(--text-general);
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    .console-time {
+        color: var(--text-less-prominent);
+    }
+
+    .console-action {
+        color: #ff9f43;
+        font-weight: bold;
+    }
+
+    .console-detail {
+        color: var(--text-prominent);
+    }
+}

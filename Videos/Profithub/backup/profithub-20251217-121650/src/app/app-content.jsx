@@ -1,0 +1,313 @@
+import React, { useEffect } from 'react';
+import { observer } from 'mobx-react-lite';
+import { ToastContainer } from 'react-toastify';
+import AuthLoadingWrapper from '@/components/auth-loading-wrapper';
+import useLiveChat from '@/components/chat/useLiveChat';
+// BOT_RESTRICTED_COUNTRIES_LIST not used in this module
+// intentionally not showing initial WelcomeScreen to prevent duplicate loaders
+import PWAInstallModal from '@/components/pwa-install-modal';
+import { getUrlBase } from '@/components/shared';
+import TncStatusUpdateModal from '@/components/tnc-status-update-modal';
+import TransactionDetailsModal from '@/components/transaction-details';
+import { api_base, ApiHelpers, ServerTime } from '@/external/bot-skeleton';
+import { V2GetActiveToken } from '@/external/bot-skeleton/services/api/appId';
+import { CONNECTION_STATUS } from '@/external/bot-skeleton/services/api/observables/connection-status-stream';
+import { useApiBase } from '@/hooks/useApiBase';
+import useIntercom from '@/hooks/useIntercom';
+import { useOfflineDetection } from '@/hooks/useOfflineDetection';
+import { useStore } from '@/hooks/useStore';
+import useThemeSwitcher from '@/hooks/useThemeSwitcher';
+import useTrackjs from '@/hooks/useTrackjs';
+import initDatadog from '@/utils/datadog';
+import initHotjar from '@/utils/hotjar';
+import { setSmartChartsPublicPath } from '@deriv/deriv-charts';
+import { ThemeProvider } from '@deriv-com/quill-ui';
+// translations used in other modules; removed localize import here since it's not used
+import Audio from '../components/audio';
+import BlocklyLoading from '../components/blockly-loading';
+import BotStopped from '../components/bot-stopped';
+import BotBuilder from '../pages/bot-builder';
+import Main from '../pages/main';
+import './app.scss';
+import 'react-toastify/dist/ReactToastify.css';
+import '../components/bot-notification/bot-notification.scss';
+
+const AppContent = observer(() => {
+    const [is_api_initialized, setIsApiInitialized] = React.useState(false);
+    const [is_loading, setIsLoading] = React.useState(true);
+    // removed min_time_elapsed as WelcomeScreen has been removed
+
+    const [offline_timeout, setOfflineTimeout] = React.useState(null);
+    const store = useStore();
+    const { app, transactions, common, client } = store;
+    const { showDigitalOptionsMaltainvestError } = app;
+    const { is_dark_mode_on } = useThemeSwitcher();
+    const { isOnline } = useOfflineDetection();
+
+    const { recovered_transactions, recoverPendingContracts } = transactions;
+    const is_subscribed_to_msg_listener = React.useRef(false);
+    const msg_listener = React.useRef(null);
+    const { connectionStatus } = useApiBase();
+    const { initTrackJS } = useTrackjs();
+
+    initTrackJS(client.loginid);
+
+    const livechat_client_information = {
+        is_client_store_initialized: client?.is_logged_in ? !!client?.account_settings?.email : !!client,
+        is_logged_in: client?.is_logged_in,
+        loginid: client?.loginid,
+        landing_company_shortcode: client?.landing_company_shortcode,
+        currency: client?.currency,
+        residence: client?.residence,
+        email: client?.account_settings?.email,
+        first_name: client?.account_settings?.first_name,
+        last_name: client?.account_settings?.last_name,
+    };
+
+    useLiveChat(livechat_client_information);
+
+    const token = V2GetActiveToken() ?? null;
+    useIntercom(token);
+
+    useEffect(() => {
+        if (connectionStatus === CONNECTION_STATUS.OPENED) {
+            setIsApiInitialized(true);
+            common.setSocketOpened(true);
+            // Clear offline timeout if connection is restored
+            if (offline_timeout) {
+                clearTimeout(offline_timeout);
+                setOfflineTimeout(null);
+            }
+        } else if (connectionStatus !== CONNECTION_STATUS.OPENED) {
+            common.setSocketOpened(false);
+        }
+    }, [common, connectionStatus, offline_timeout]);
+
+    // Handle offline scenarios - don't wait indefinitely for API
+    useEffect(() => {
+        if (!isOnline && is_loading) {
+            console.log('[Offline] Detected offline state, setting timeout to show dashboard');
+            const timeout = setTimeout(() => {
+                console.log('[Offline] Timeout reached, showing dashboard in offline mode');
+                setIsLoading(false);
+                setIsApiInitialized(true);
+                // Initialize basic stores for offline mode
+                if (!app.dbot_store) {
+                    init();
+                }
+            }, 3000); // Wait 3 seconds for potential connection, then show dashboard
+
+            setOfflineTimeout(timeout);
+        } else if (isOnline && offline_timeout) {
+            // Clear timeout if we come back online
+            clearTimeout(offline_timeout);
+            setOfflineTimeout(null);
+        }
+
+        return () => {
+            if (offline_timeout) {
+                clearTimeout(offline_timeout);
+            }
+        };
+    }, [isOnline, is_loading, offline_timeout, app.dbot_store]);
+
+    const { current_language } = common;
+    const html = document.documentElement;
+    React.useEffect(() => {
+        html?.setAttribute('lang', current_language.toLowerCase());
+        html?.setAttribute('dir', current_language.toLowerCase() === 'ar' ? 'rtl' : 'ltr');
+    }, [current_language, html]);
+
+    // Check for EU client error early
+    const is_eu_country = client?.is_eu_country;
+    const clients_logged_out_country_code = client?.clients_country;
+    const clients_logged_in_country_code = client?.account_settings?.country_code;
+    const is_client_logged_in = client?.is_logged_in;
+
+    useEffect(() => {
+        // Determine if client is in a restricted country (left as a no-op currently)
+        // Previously used to set EU error loading state; removed because it's unused in rendering.
+        // Keep logic minimal to avoid side-effects during render until needed.
+    }, [is_client_logged_in, clients_logged_in_country_code, clients_logged_out_country_code, is_eu_country]);
+
+    const handleMessage = React.useCallback(
+        ({ data }) => {
+            if (data?.msg_type === 'proposal_open_contract' && !data?.error) {
+                const { proposal_open_contract } = data;
+                if (
+                    proposal_open_contract?.status !== 'open' &&
+                    !recovered_transactions?.includes(proposal_open_contract?.contract_id)
+                ) {
+                    recoverPendingContracts(proposal_open_contract);
+                }
+            }
+        },
+        [recovered_transactions, recoverPendingContracts]
+    );
+
+    React.useEffect(() => {
+        setSmartChartsPublicPath(getUrlBase('/js/smartcharts/'));
+    }, []);
+
+    React.useEffect(() => {
+        // Check if api is initialized and then subscribe to the api messages
+        // Also we should only subscribe to the messages once user is logged in
+        // And is not already subscribed to the messages
+        if (!is_subscribed_to_msg_listener.current && client.is_logged_in && is_api_initialized && api_base?.api) {
+            is_subscribed_to_msg_listener.current = true;
+            msg_listener.current = api_base.api.onMessage()?.subscribe(handleMessage);
+        }
+        return () => {
+            if (is_subscribed_to_msg_listener.current && msg_listener.current) {
+                is_subscribed_to_msg_listener.current = false;
+                msg_listener.current.unsubscribe?.();
+            }
+        };
+    }, [is_api_initialized, client.is_logged_in, client.loginid, handleMessage, connectionStatus]);
+
+    React.useEffect(() => {
+        showDigitalOptionsMaltainvestError(client, common);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [client.is_options_blocked, client.account_settings?.country_code, client.clients_country]);
+
+    const init = () => {
+        ServerTime.init(common);
+        app.setDBotEngineStores();
+        ApiHelpers.setInstance(app.api_helpers_store);
+        import('@/utils/gtm').then(({ default: GTM }) => {
+            GTM.init(store);
+        });
+    };
+
+    const changeActiveSymbolLoadingState = () => {
+        init();
+
+        const retrieveActiveSymbols = () => {
+            const { active_symbols } = ApiHelpers.instance;
+
+            // Handle offline scenario
+            if (!isOnline) {
+                console.log('[Offline] Skipping active symbols retrieval, showing dashboard');
+                setIsLoading(false);
+                return;
+            }
+
+            active_symbols
+                .retrieveActiveSymbols(true)
+                .then(() => {
+                    setIsLoading(false);
+                })
+                .catch(error => {
+                    console.error('[API] Failed to retrieve active symbols:', error);
+                    // Don't stay in loading state if API fails
+                    setIsLoading(false);
+                });
+        };
+
+        if (ApiHelpers?.instance?.active_symbols) {
+            retrieveActiveSymbols();
+        } else {
+            // This is a workaround to fix the issue where the active symbols are not loaded immediately
+            // when the API is initialized. Should be replaced with RxJS pubsub
+            const intervalId = setInterval(() => {
+                if (ApiHelpers?.instance?.active_symbols) {
+                    clearInterval(intervalId);
+                    retrieveActiveSymbols();
+                } else if (!isOnline) {
+                    // If offline, don't wait indefinitely
+                    clearInterval(intervalId);
+                    console.log('[Offline] Stopping active symbols wait, showing dashboard');
+                    setIsLoading(false);
+                }
+            }, 1000);
+
+            // Set a maximum timeout to prevent infinite loading
+            setTimeout(() => {
+                clearInterval(intervalId);
+                if (is_loading && !isOnline) {
+                    console.log('[Timeout] Active symbols loading timeout, showing dashboard (Offline)');
+                    setIsLoading(false);
+                } else if (is_loading) {
+                    console.log('[Timeout] Active symbols loading timeout, but Online - continuing to wait...');
+                    // Don't force close if online, as we need symbols!
+                    // But if it's been 30s, maybe we must.
+                    setIsLoading(false);
+                }
+            }, 30000); // 30 second timeout
+        }
+    };
+
+    React.useEffect(() => {
+        if (is_api_initialized) {
+            init();
+            setIsLoading(true);
+            if (!client.is_logged_in) {
+                changeActiveSymbolLoadingState();
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [is_api_initialized, client.is_logged_in]);
+
+    // use is_landing_company_loaded to know got details of accounts to identify should show an error or not
+    React.useEffect(() => {
+        if (client.is_logged_in && client.is_landing_company_loaded && is_api_initialized) {
+            changeActiveSymbolLoadingState();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [client.is_landing_company_loaded, is_api_initialized, client.loginid]);
+
+    useEffect(() => {
+        initDatadog(true);
+        if (client) {
+            initHotjar(client);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [client]);
+
+    if (common?.error) return null;
+
+    // Show loading message based on online/offline state
+
+    // Skip loading entirely when offline - show dashboard directly
+    if (!isOnline) {
+        console.log('[Offline] Bypassing loader, showing dashboard directly');
+        return (
+            <AuthLoadingWrapper>
+                <ThemeProvider theme={is_dark_mode_on ? 'dark' : 'light'}>
+                    <BlocklyLoading />
+                    <div className='bot-dashboard bot' data-testid='dt_bot_dashboard'>
+                        {/* <PWAInstallModalTest /> */}
+                        <Audio />
+                        <Main />
+                        <BotBuilder />
+                        <BotStopped />
+                        <TransactionDetailsModal />
+                        <PWAInstallModal />
+                        <ToastContainer limit={3} draggable={false} />
+                        <TncStatusUpdateModal />
+                    </div>
+                </ThemeProvider>
+            </AuthLoadingWrapper>
+        );
+    }
+
+    return (
+        <AuthLoadingWrapper>
+            <ThemeProvider theme={is_dark_mode_on ? 'dark' : 'light'}>
+                <BlocklyLoading />
+                <div className='bot-dashboard bot' data-testid='dt_bot_dashboard'>
+                    {/* <PWAInstallModalTest /> */}
+                    <Audio />
+                    <Main />
+                    <BotStopped />
+                    <TransactionDetailsModal />
+                    <PWAInstallModal />
+                    <ToastContainer limit={3} draggable={false} />
+                    <TncStatusUpdateModal />
+                </div>
+            </ThemeProvider>
+        </AuthLoadingWrapper>
+    );
+});
+
+export default AppContent;

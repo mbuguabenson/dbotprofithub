@@ -1,0 +1,73 @@
+import { useState } from 'react';
+import { useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { LocalStore } from '@/components/shared/utils/storage/storage';
+import RootStore from '@/stores/root-store';
+import { AuthManager } from '@/utils/AuthManager';
+import { Analytics } from '@deriv-com/analytics';
+
+/**
+ * Provides an object with properties: `oAuthLogout`, `retriggerOAuth2Login`, and `isSingleLoggingIn`.
+ *
+ * `oAuthLogout` is a function that logs out the user of the OAuth2-enabled app.
+ *
+ * `retriggerOAuth2Login` is a function that retriggers the OAuth2 login flow to get a new token.
+ *
+ * `isSingleLoggingIn` is a boolean that indicates whether the user is currently logging in.
+ *
+ * The `handleLogout` argument is an optional function that will be called after logging out the user.
+ * If `handleLogout` is not provided, the function will resolve immediately.
+ *
+ * @param {{ handleLogout?: () => Promise<void> }} [options] - An object with an optional `handleLogout` property.
+ * @returns {{ oAuthLogout: () => Promise<void>; retriggerOAuth2Login: () => Promise<void>; isSingleLoggingIn: boolean; isOAuth2Enabled: boolean }}
+ */
+export const useOauth2 = ({
+    handleLogout,
+    client,
+}: {
+    handleLogout?: () => Promise<void>;
+    client?: RootStore['client'];
+} = {}) => {
+    const [isSingleLoggingIn, setIsSingleLoggingIn] = useState(false);
+    const accountsList = JSON.parse(localStorage.getItem('accountsList') ?? '{}');
+    const isClientAccountsPopulated = Object.keys(accountsList).length > 0;
+    const isSilentLoginExcluded =
+        window.location.pathname.includes('callback') || window.location.pathname.includes('endpoint');
+
+    const loggedState = Cookies.get('logged_state');
+
+    useEffect(() => {
+        window.addEventListener('unhandledrejection', event => {
+            if (event?.reason?.error?.code === 'InvalidToken') {
+                setIsSingleLoggingIn(false);
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        const willEventuallySSO = loggedState === 'true' && !isClientAccountsPopulated;
+        const willEventuallySLO = loggedState === 'false' && isClientAccountsPopulated;
+
+        if (!isSilentLoginExcluded && (willEventuallySSO || willEventuallySLO)) {
+            setIsSingleLoggingIn(true);
+        } else {
+            setIsSingleLoggingIn(false);
+        }
+    }, [isClientAccountsPopulated, loggedState, isSilentLoginExcluded]);
+
+    const logoutHandler = async () => {
+        client?.setIsLoggingOut(true);
+        if (handleLogout) {
+            await handleLogout();
+        }
+        // Use non-reloading logout to avoid disruptive refresh loops.
+        AuthManager.logout(false);
+        Analytics.reset();
+    };
+
+    const retriggerOAuth2Login = async () => {
+        window.location.href = AuthManager.getLoginUrl(LocalStore.get('i18n') || 'en');
+    };
+
+    return { oAuthLogout: logoutHandler, retriggerOAuth2Login, isSingleLoggingIn, isOAuth2Enabled: true };
+};

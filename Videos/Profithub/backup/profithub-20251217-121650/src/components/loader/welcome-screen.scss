@@ -1,0 +1,274 @@
+@use 'components/shared/styles/mixins' as *;
+
+.welcome-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--general-main-1); // Uses theme background
+    color: var(--text-prominent);
+    overflow: hidden;
+    padding: 2rem;
+
+    // Background effects
+    &:before {
+        content: '';
+        position: absolute;
+        width: 150vw;
+        height: 150vh;
+        background: radial-gradient(circle at center, rgb(17 153 142 / 10%) 0%, transparent 70%);
+        z-index: -1;
+    }
+
+    &__content-wrapper {
+        max-width: 600px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    &__title {
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        text-align: center;
+
+        // Gradient Text "Profit Hub"
+        background: linear-gradient(90deg, #11998e, #38ef7d);
+        background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 0 10px rgb(56 239 125 / 40%));
+    }
+
+    &__subtitle {
+        font-size: 1.4rem;
+        text-align: center;
+        color: var(--text-general);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+        max-width: 90%;
+    }
+
+    // Progress Bar
+    &__progress-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    &__progress-bar-wrapper {
+        width: 100%;
+        height: 12px;
+        background: rgb(255 255 255 / 5%);
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid rgb(255 255 255 / 10%);
+    }
+
+    &__progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #11998e, #38ef7d);
+        transition: width 0.1s linear;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgb(56 239 125 / 50%);
+    }
+
+    &__percentage {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #38ef7d;
+        text-shadow: 0 0 15px rgb(56 239 125 / 40%);
+        margin-top: 0.5rem;
+    }
+
+    // Steps Container
+    &__steps-container {
+        width: 100%;
+        background: var(--glass-background); // Glassmorphism
+        border: 1px solid var(--glass-border); // Neon/Glass border
+        border-radius: 16px;
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+
+        // Green glowing border effect
+        border-color: rgb(56 239 125 / 30%);
+        box-shadow: 0 0 15px rgb(56 239 125 / 10%);
+    }
+
+    &__steps-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 1.6rem;
+        color: var(--text-prominent);
+    }
+
+    &__step {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        margin-bottom: 1.2rem;
+        padding: 1.2rem;
+        border-radius: 8px;
+        background: rgb(255 255 255 / 3%);
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        position: relative;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        &--active {
+            background: rgb(56 239 125 / 10%);
+            border-color: rgb(56 239 125 / 30%);
+
+            .welcome-screen__step-icon {
+                border-color: #38ef7d;
+                box-shadow: 0 0 8px #38ef7d;
+
+                // background: #38ef7d; // Spinner instad
+                border-top-color: transparent;
+                animation: spin 1s linear infinite;
+            }
+
+            .welcome-screen__step-text {
+                color: #38ef7d;
+                font-weight: 600;
+            }
+        }
+
+        &--completed {
+            .welcome-screen__step-icon {
+                background: #38ef7d;
+                border-color: #38ef7d;
+            }
+        }
+    }
+
+    &__step-icon {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        border-radius: 50%;
+        border: 2px solid var(--text-disabled);
+        transition: all 0.3s ease;
+    }
+
+    &__step-text {
+        font-size: 1.4rem;
+        color: var(--text-general);
+        flex-grow: 1;
+    }
+
+    &__step-check {
+        color: #38ef7d;
+        font-weight: bold;
+    }
+
+    &__step-loading {
+        font-size: 1.2rem;
+        color: #38ef7d;
+        font-style: italic;
+    }
+
+    // Footer
+    &__footer {
+        margin-top: 3rem;
+        width: 100%;
+        background: rgb(0 198 255 / 5%); // Blue tint
+        border: 1px solid rgb(0 198 255 / 30%);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 0 15px rgb(0 198 255 / 10%);
+
+        h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-prominent);
+            margin-bottom: 1.6rem;
+        }
+    }
+
+    &__footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.6rem;
+
+        @include mobile-or-tablet-screen {
+            flex-direction: column;
+        }
+    }
+
+    &__contact-item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        span:first-child {
+            font-size: 1.2rem;
+            color: var(--text-less-prominent);
+            margin-bottom: 0.4rem;
+        }
+
+        span:last-child {
+            font-size: 1.4rem;
+            color: #00c6ff; // Blue
+            font-weight: 600;
+        }
+
+        &--right {
+            align-items: flex-end;
+
+            @include mobile-or-tablet-screen {
+                align-items: center;
+            }
+        }
+    }
+
+    &__support-text {
+        color: #38ef7d;
+        font-weight: 700;
+        font-size: 1.4rem;
+        margin-top: 1.6rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    &__powered-by {
+        margin-top: 3rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        opacity: 0.7;
+
+        span {
+            font-size: 1.2rem;
+            color: var(--text-general);
+        }
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}
