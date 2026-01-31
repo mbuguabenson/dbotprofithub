@@ -13,6 +13,7 @@ interface Account {
   id: string
   type: "Demo" | "Real"
   currency: string
+  balance: number
 }
 
 export function useDerivAuth() {
@@ -31,22 +32,36 @@ export function useDerivAuth() {
   useEffect(() => {
     if (typeof window === "undefined") return
 
-    // 1. Check for OAuth tokens in URL
     const urlParams = new URLSearchParams(window.location.search)
-    const token1 = urlParams.get("token1")
-    const acct1 = urlParams.get("acct1")
-    
-    if (token1) {
-      console.log("[v0] 🔑 OAuth tokens detected in URL")
-      localStorage.setItem("deriv_api_token", token1)
-      if (acct1) localStorage.setItem("active_login_id", acct1)
-      
+    const urlTokens: Record<string, string> = {}
+    let primaryToken = ""
+    let primaryAcct = ""
+
+    // Extract all tokens from URL (acct1, token1, acct2, token2, etc.)
+    for (let i = 1; i <= 10; i++) {
+      const t = urlParams.get(`token${i}`)
+      const a = urlParams.get(`acct${i}`)
+      if (t && a) {
+        urlTokens[a] = t
+        if (i === 1) {
+          primaryToken = t
+          primaryAcct = a
+        }
+      }
+    }
+
+    if (Object.keys(urlTokens).length > 0) {
+      console.log("[v0] 🔑 OAuth tokens detected in URL:", Object.keys(urlTokens).length)
+      localStorage.setItem("deriv_auth_tokens", JSON.stringify(urlTokens))
+      localStorage.setItem("deriv_api_token", primaryToken)
+      if (primaryAcct) localStorage.setItem("active_login_id", primaryAcct)
+
       // Clean up URL without refreshing
       const cleanUrl = window.location.pathname
       window.history.replaceState({}, document.title, cleanUrl)
-      
-      setToken(token1)
-      connectWithToken(token1)
+
+      setToken(primaryToken)
+      connectWithToken(primaryToken)
       return
     }
 
@@ -58,12 +73,6 @@ export function useDerivAuth() {
       connectWithToken(storedToken)
     } else {
       console.log("[v0] ℹ️ No session found, user is guest")
-      // We don't force the modal anymore, user can browse as guest
-      // or click Login in the header
-    }
-
-    return () => {
-      // Cleanup handled by manager
     }
   }, [])
 
@@ -104,6 +113,7 @@ export function useDerivAuth() {
             id: acc.loginid,
             type: acc.is_virtual ? "Demo" : "Real",
             currency: acc.currency,
+            balance: Number(acc.balance) || 0,
           }))
           setAccounts(formatted)
         }
@@ -117,10 +127,23 @@ export function useDerivAuth() {
 
       // 2. Handle Balance updates
       if (data.msg_type === "balance" && data.balance) {
-        setBalance({
-          amount: data.balance.balance,
-          currency: data.balance.currency,
-        })
+        const msgLoginId = data.balance.loginid || activeLoginId
+        
+        // Update current account balance
+        if (msgLoginId === activeLoginId) {
+          setBalance({
+            amount: data.balance.balance,
+            currency: data.balance.currency,
+          })
+        }
+        
+        // Update list of accounts balance
+        setAccounts(prev => prev.map(acc => {
+          if (acc.id === msgLoginId) {
+            return { ...acc, balance: data.balance.balance }
+          }
+          return acc
+        }))
       }
     }
 
@@ -192,10 +215,24 @@ export function useDerivAuth() {
   }
 
   const switchAccount = (loginId: string) => {
-    if (!token || !loginId || typeof window === "undefined") return
+    if (!loginId || typeof window === "undefined") return
+
+    // Try to find token for this loginId
+    const storedTokens = JSON.parse(localStorage.getItem("deriv_auth_tokens") || "{}")
+    const targetToken = storedTokens[loginId] || token // Fallback to current token if specifically mapped token not found
+
+    if (!targetToken) {
+      console.error("[v0] ❌ No token found for account:", loginId)
+      return
+    }
 
     console.log("[v0] 🔄 Switching to account:", loginId)
-    manager.send({ authorize: token, loginid: loginId })
+    localStorage.setItem("deriv_api_token", targetToken)
+    localStorage.setItem("active_login_id", loginId)
+    setToken(targetToken)
+    
+    // Authorization message ONLY takes the token. loginid is NOT a allowed property.
+    manager.send({ authorize: targetToken })
   }
 
   return {

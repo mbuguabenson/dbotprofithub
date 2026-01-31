@@ -16,6 +16,7 @@ interface Account {
   id: string
   type: "Demo" | "Real"
   currency: string
+  balance: number
 }
 
 interface DerivAPIContextType {

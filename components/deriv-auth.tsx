@@ -106,14 +106,24 @@ export function DerivAuth({ theme = "dark" }: DerivAuthProps) {
             {accounts.length > 1 && (
               <Select value={activeLoginId || ""} onValueChange={switchAccount}>
                 <SelectTrigger
-                  className={`w-24 h-7 text-[10px] font-bold rounded-lg ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white" : "bg-white border-slate-200 text-slate-900"}`}
+                  className={`w-40 h-7 text-[10px] font-bold rounded-lg ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white" : "bg-white border-slate-200 text-slate-900"}`}
                 >
                   <SelectValue placeholder="Switch" />
                 </SelectTrigger>
                 <SelectContent className={theme === "dark" ? "bg-slate-900 border-slate-700 text-white" : "bg-white border-slate-200"}>
                   {accounts.map((acc) => (
                     <SelectItem key={acc.id} value={acc.id} className="text-[10px] font-bold">
-                      {acc.id} ({acc.type})
+                      <div className="flex flex-col">
+                        <span className="flex items-center gap-1">
+                          {acc.id} 
+                          <Badge className={`h-3 px-1 text-[8px] ${acc.type === "Real" ? "bg-emerald-500 text-black" : "bg-yellow-500 text-black"}`}>
+                            {acc.type}
+                          </Badge>
+                        </span>
+                        <span className={`text-[9px] ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}>
+                          {acc.balance.toFixed(2)} {acc.currency}
+                        </span>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
