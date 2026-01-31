@@ -290,7 +290,7 @@ export function TradingTab({ theme: propTheme }: TradingTabProps) {
 
   return (
     <div
-      className={`w-full rounded-lg p-3 sm:p-4 border ${currentTheme === "dark" ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20" : "bg-white border-gray-200"}`}
+      className={`w-full rounded-lg p-3 sm:p-4 border ${currentTheme === "dark" ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20" : "bg-white border-gray-200"}`}
     >
       <div className="flex items-center justify-between mb-4 pb-3 border-b border-blue-500/20">
         <div className="flex items-center gap-2">
@@ -330,7 +330,7 @@ export function TradingTab({ theme: propTheme }: TradingTabProps) {
         <div
           className={`p-3 rounded-lg border mb-4 flex items-start gap-2 ${currentTheme === "dark" ? "bg-red-500/10 border-red-500/30" : "bg-red-50 border-red-200"}`}
         >
-          <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0 text-red-400" />
+          <AlertCircle className="h-4 w-4 mt-0.5 shrink-0 text-red-400" />
           <div>
             <p className={`text-sm font-medium ${currentTheme === "dark" ? "text-red-400" : "text-red-600"}`}>
               Connection Error
@@ -359,7 +359,7 @@ export function TradingTab({ theme: propTheme }: TradingTabProps) {
         <>
           {currentTick !== null && (
             <div
-              className={`p-4 rounded-lg border mb-4 ${currentTheme === "dark" ? "bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/30" : "bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200"}`}
+              className={`p-4 rounded-lg border mb-4 ${currentTheme === "dark" ? "bg-linear-to-r from-blue-500/10 to-purple-500/10 border-blue-500/30" : "bg-linear-to-r from-blue-50 to-purple-50 border-blue-200"}`}
             >
               <div className="flex items-center justify-between">
                 <div>

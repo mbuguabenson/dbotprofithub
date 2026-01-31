@@ -119,7 +119,7 @@ export default function DerivAnalysisApp() {
 
   if (initError) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-900 to-red-950">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-900 to-red-950">
         <div className="text-center p-8 bg-red-800/50 rounded-xl border border-red-500 max-w-md">
           <h2 className="text-2xl font-bold text-white mb-4">Initialization Error</h2>
           <p className="text-red-200 mb-6">{initError}</p>
@@ -149,7 +149,7 @@ export default function DerivAnalysisApp() {
 
   return (
     <div
-      className={`min-h-screen ${theme === "dark" ? "bg-gradient-to-br from-[#0a0e27] via-[#0f1629] to-[#1a1f3a]" : "bg-gradient-to-br from-gray-50 via-white to-gray-100"}`}
+      className={`min-h-screen ${theme === "dark" ? "bg-linear-to-br from-[#0a0e27] via-[#0f1629] to-[#1a1f3a]" : "bg-linear-to-br from-gray-50 via-white to-gray-100"}`}
     >
       <header
         className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
@@ -163,7 +163,7 @@ export default function DerivAnalysisApp() {
             {/* Left: Logo & Home */}
             <div className="flex items-center gap-3 sm:gap-6">
               <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                <div className="absolute -inset-1 bg-linear-to-r from-cyan-500 to-blue-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -180,7 +180,7 @@ export default function DerivAnalysisApp() {
               <div className="flex flex-col">
                 <h1 className={`text-xl sm:text-2xl font-black tracking-tight flex items-center gap-2 ${
                   theme === "dark" 
-                    ? "bg-gradient-to-r from-cyan-400 via-emerald-400 to-blue-500 bg-clip-text text-transparent animate-pulse" 
+                    ? "bg-linear-to-r from-cyan-400 via-emerald-400 to-blue-500 bg-clip-text text-transparent animate-pulse" 
                     : "text-slate-900"
                 }`}>
                   <span className="text-2xl">💎</span>
@@ -210,7 +210,7 @@ export default function DerivAnalysisApp() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-2"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-rose-600 opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="absolute inset-0 bg-linear-to-r from-red-500 to-rose-600 opacity-80 group-hover:opacity-100 transition-opacity"></div>
                     <span className="relative z-10 flex items-center gap-2">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
@@ -220,7 +220,7 @@ export default function DerivAnalysisApp() {
                   </a>
                 </Button>
 
-                <div className={`h-10 w-[1px] ${theme === "dark" ? "bg-blue-500/20" : "bg-gray-200"}`}></div>
+                <div className={`h-10 w-px ${theme === "dark" ? "bg-blue-500/20" : "bg-gray-200"}`}></div>
               </div>
 
               <DerivAuth theme={theme} />
@@ -317,7 +317,7 @@ export default function DerivAnalysisApp() {
       <div
         className={`border-b ${theme === "dark" ? "border-green-500/20 bg-[#0a0e27]/80" : "border-gray-200 bg-white/80"} backdrop-blur-md px-2 sm:px-3 md:px-4 py-2 sm:py-3`}
       >
-        <LiveTicker price={currentPrice} digit={currentDigit} theme={theme} symbol={symbol} />
+        <LiveTicker price={currentPrice ?? undefined} digit={currentDigit} theme={theme} symbol={symbol} />
       </div>
 
       <Tabs defaultValue="smart-analysis" className="w-full">
@@ -348,7 +348,7 @@ export default function DerivAnalysisApp() {
               <TabsTrigger
                 key={tab}
                 value={tab}
-                className={`flex-shrink-0 rounded-none border-b-2 border-transparent text-xs sm:text-sm px-2 sm:px-3 md:px-4 py-2 sm:py-3 whitespace-nowrap transition-all capitalize font-medium ${
+                className={`shrink-0 rounded-none border-b-2 border-transparent text-xs sm:text-sm px-2 sm:px-3 md:px-4 py-2 sm:py-3 whitespace-nowrap transition-all capitalize font-medium ${
                   tab === "smartauto24"
                     ? "data-[state=active]:border-yellow-500 data-[state=active]:text-yellow-500 data-[state=active]:shadow-[0_2px_10px_rgba(234,179,8,0.3)]"
                     : tab === "autobot" || tab === "automated" || tab === "automated-trades"
@@ -425,13 +425,13 @@ export default function DerivAnalysisApp() {
             <>
               <TabsContent value="smart-analysis" className="mt-0 space-y-3 sm:space-y-4 md:space-y-6">
                 <div
-                  className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border text-center glow-card-active ${theme === "dark" ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "bg-white border-gray-200 shadow-lg"}`}
+                  className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border text-center glow-card-active ${theme === "dark" ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "bg-white border-gray-200 shadow-lg"}`}
                 >
                   <div className={`text-xs sm:text-sm mb-2 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                     Current Digit:
                   </div>
                   <div
-                    className={`text-3xl sm:text-4xl md:text-6xl font-bold animate-pulse ${theme === "dark" ? "bg-gradient-to-r from-orange-400 via-red-400 to-pink-400 bg-clip-text text-transparent" : "text-orange-600"}`}
+                    className={`text-3xl sm:text-4xl md:text-6xl font-bold animate-pulse ${theme === "dark" ? "bg-linear-to-r from-orange-400 via-red-400 to-pink-400 bg-clip-text text-transparent" : "text-orange-600"}`}
                   >
                     {currentDigit !== null ? currentDigit : "0"}
                   </div>
@@ -444,7 +444,7 @@ export default function DerivAnalysisApp() {
 
                 {analysis && analysis.digitFrequencies && (
                   <div
-                    className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-8 border glow-card-active ${theme === "dark" ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "bg-white border-gray-200 shadow-lg"}`}
+                    className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-8 border glow-card-active ${theme === "dark" ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "bg-white border-gray-200 shadow-lg"}`}
                   >
                     <h3
                       className={`text-base sm:text-lg md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-center ${theme === "dark" ? "text-white" : "text-gray-900"}`}
@@ -462,7 +462,7 @@ export default function DerivAnalysisApp() {
                 {analysis && recent100Digits.length > 0 && recentDigits.length > 0 && (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
                     <div
-                      className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border glow-card-active ${theme === "dark" ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "bg-white border-gray-200 shadow-lg"}`}
+                      className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border glow-card-active ${theme === "dark" ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "bg-white border-gray-200 shadow-lg"}`}
                     >
                       <h3
                         className={`text-sm sm:text-base md:text-lg font-bold mb-3 sm:mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
@@ -473,7 +473,7 @@ export default function DerivAnalysisApp() {
                     </div>
 
                     <div
-                      className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border glow-card-active ${theme === "dark" ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "bg-white border-gray-200 shadow-lg"}`}
+                      className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border glow-card-active ${theme === "dark" ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "bg-white border-gray-200 shadow-lg"}`}
                     >
                       <StatisticalAnalysis analysis={analysis} recentDigits={recent100Digits} theme={theme} />
                     </div>
@@ -482,7 +482,7 @@ export default function DerivAnalysisApp() {
 
                 {recentDigits.length > 0 && (
                   <div
-                    className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border glow-card-active ${theme === "dark" ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "bg-white border-gray-200 shadow-lg"}`}
+                    className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border glow-card-active ${theme === "dark" ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "bg-white border-gray-200 shadow-lg"}`}
                   >
                     <h3
                       className={`text-sm sm:text-base md:text-lg font-bold mb-3 sm:mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
@@ -495,7 +495,7 @@ export default function DerivAnalysisApp() {
 
                 {analysis && analysis.digitFrequencies && analysis.powerIndex && (
                   <div
-                    className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border glow-card-active ${theme === "dark" ? "bg-gradient-to-br from-green-500/10 to-green-500/10 border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.2)]" : "bg-green-50 border-green-200 shadow-lg"}`}
+                    className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border glow-card-active ${theme === "dark" ? "bg-linear-to-br from-green-500/10 to-green-500/10 border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.2)]" : "bg-green-50 border-green-200 shadow-lg"}`}
                   >
                     <h3
                       className={`text-sm sm:text-base md:text-lg font-bold mb-3 sm:mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
@@ -547,10 +547,10 @@ export default function DerivAnalysisApp() {
 
                 {analysis && (
                   <div
-                    className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border glow-card-active ${theme === "dark" ? "bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.2)]" : "bg-purple-50 border-purple-200 shadow-lg"}`}
+                    className={`rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border glow-card-active ${theme === "dark" ? "bg-linear-to-br from-purple-500/10 to-pink-500/10 border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.2)]" : "bg-purple-50 border-purple-200 shadow-lg"}`}
                   >
                     <h3
-                      className={`text-sm sm:text-base md:text-lg font-bold mb-3 sm:mb-4 ${theme === "dark" ? "bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent" : "text-purple-900"}`}
+                      className={`text-sm sm:text-base md:text-lg font-bold mb-3 sm:mb-4 ${theme === "dark" ? "bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent" : "text-purple-900"}`}
                     >
                       Analysis Summary
                     </h3>
@@ -593,14 +593,7 @@ export default function DerivAnalysisApp() {
               </TabsContent>
 
               <TabsContent value="super-signals" className="mt-0">
-                {analysis && (
-                  <SuperSignalsTab
-                    analysis={analysis}
-                    currentDigit={currentDigit}
-                    recentDigits={recent100Digits}
-                    theme={theme}
-                  />
-                )}
+                <SuperSignalsTab theme={theme} />
               </TabsContent>
 
               <TabsContent value="even-odd" className="mt-0">

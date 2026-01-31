@@ -95,7 +95,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
   if (error) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0a0e17]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-900/20 via-[#0a0e17] to-[#0a0e17]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-red-900/20 via-[#0a0e17] to-[#0a0e17]" />
         <div className="w-full max-w-md px-6 relative z-10">
           <div className="bg-[#111827]/80 backdrop-blur-md border border-red-500/30 rounded-2xl p-8 shadow-2xl shadow-red-500/10">
             <div className="text-center mb-6">
@@ -105,7 +105,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
             </div>
             <button
               onClick={() => window.location.reload()}
-              className="w-full px-6 py-3 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-full font-semibold transition-all shadow-lg hover:shadow-red-500/25"
+              className="w-full px-6 py-3 bg-linear-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-full font-semibold transition-all shadow-lg hover:shadow-red-500/25"
             >
               Retry Connection
             </button>
@@ -118,7 +118,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#050b14] overflow-hidden">
       {/* Background Ambience */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/10 via-[#050b14] to-[#050b14]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-blue-900/10 via-[#050b14] to-[#050b14]" />
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-[100px] animate-pulse" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-[100px] animate-pulse delay-1000" />
 
@@ -147,7 +147,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
           </div>
           
           <h1 className="text-5xl font-bold mb-3 tracking-tight">
-            <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
               Profit Hub
             </span>
           </h1>
@@ -160,7 +160,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
         <div className="space-y-4 mb-10">
           <div className="relative h-2 bg-slate-800/50 rounded-full overflow-hidden backdrop-blur-sm border border-slate-700/30">
             <div
-              className="absolute inset-0 bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-500 h-full rounded-full transition-all duration-500 ease-out shadow-[0_0_15px_rgba(34,211,238,0.5)]"
+              className="absolute inset-0 bg-linear-to-r from-blue-600 via-cyan-500 to-purple-500 h-full rounded-full transition-all duration-500 ease-out shadow-[0_0_15px_rgba(34,211,238,0.5)]"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -184,7 +184,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
                       : "opacity-40"
                 }`}
               >
-                <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                <div className="shrink-0 w-6 h-6 flex items-center justify-center">
                   {step.status === "complete" ? (
                     <div className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center border border-cyan-500/50">
                       <CheckCircle2 className="w-3 h-3" />

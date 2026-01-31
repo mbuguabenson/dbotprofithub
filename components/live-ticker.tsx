@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 
 interface LiveTickerProps {
-  price: number | undefined
+  price: number | null | undefined
   digit: number | null
   theme?: "light" | "dark"
   symbol?: string
@@ -47,7 +47,7 @@ export function LiveTicker({ price, digit, theme = "dark", symbol = "Volatility"
     >
       {/* Background Glow Pulse (Dark Mode Only) */}
       {theme === "dark" && (
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-blue-500/5 to-purple-500/5 opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
+        <div className="absolute inset-0 bg-linear-to-r from-cyan-500/5 via-blue-500/5 to-purple-500/5 opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
       )}
 
       {/* Market Info Section */}
@@ -64,11 +64,11 @@ export function LiveTicker({ price, digit, theme = "dark", symbol = "Volatility"
       </div>
 
       {/* Vertical Dividers (Desktop) */}
-      <div className={`hidden sm:block w-px h-full ${theme === "dark" ? "bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent" : "bg-slate-200"}`} />
+      <div className={`hidden sm:block w-px h-full ${theme === "dark" ? "bg-linear-to-b from-transparent via-cyan-500/20 to-transparent" : "bg-slate-200"}`} />
 
       {/* Price Section */}
       <div className="flex-[1.5] flex flex-col justify-center relative sm:px-8 group/price z-10">
-        <div className="absolute inset-0 bg-cyan-500/0 group-hover/price:bg-cyan-500/[0.02] transition-colors duration-300" />
+        <div className="absolute inset-0 bg-cyan-500/0 group-hover/price:bg-cyan-500/2 transition-colors duration-300" />
         <h3 className={`text-[10px] uppercase tracking-[0.2em] font-black mb-1 ${theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>
           Spot Price Stream
         </h3>
@@ -99,7 +99,7 @@ export function LiveTicker({ price, digit, theme = "dark", symbol = "Volatility"
       </div>
 
       {/* Vertical Dividers (Desktop) */}
-      <div className={`hidden sm:block w-px h-full ${theme === "dark" ? "bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent" : "bg-slate-200"}`} />
+      <div className={`hidden sm:block w-px h-full ${theme === "dark" ? "bg-linear-to-b from-transparent via-cyan-500/20 to-transparent" : "bg-slate-200"}`} />
 
       {/* Digit/Tick Section */}
       <div className="flex flex-col sm:flex-row items-center gap-4 sm:px-8 bg-black/10 sm:bg-transparent rounded-xl sm:rounded-none p-3 sm:p-0 z-10">

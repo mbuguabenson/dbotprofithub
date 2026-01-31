@@ -535,7 +535,7 @@ export default function TradingBotSlider() {
                 <div className="relative">
                     <div className="rounded-2xl shadow-2xl p-6 bg-[#0f172a] border border-slate-800 relative overflow-hidden">
                         {/* Soft Glow Background */}
-                        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none"></div>
+                        <div className="absolute top-0 left-0 w-full h-full bg-linear-to-br from-blue-500/5 to-purple-500/5 pointer-events-none"></div>
 
                         <div className="relative z-10 flex items-center justify-between mb-6">
                             <div className="bg-gray-200 text-gray-900 font-semibold px-4 py-1.5 rounded-full text-lg">Deriv Bot Simulator</div>
@@ -570,7 +570,7 @@ export default function TradingBotSlider() {
                             <div className="flex transition-transform duration-300 ease-in-out" style={{transform: `translateX(${ -index * 100 }%)`}}>
                             
                             {/* === Panel 1: Bot Configuration === */}
-                            <div className="w-full flex-shrink-0">
+                            <div className="w-full shrink-0">
                                 <div className="space-y-3">
                                     
                                     {/* Markets */}
@@ -695,7 +695,7 @@ export default function TradingBotSlider() {
                             </div>
 
                             {/* === Panel 2: Transactions === */}
-                            <div className="w-full flex-shrink-0">
+                            <div className="w-full shrink-0">
                                 <div className="space-y-2">
                                     <div className="mb-3 grid grid-cols-3 gap-2 text-sm text-cyan-300 font-semibold">
                                         <div>ID/Type</div>
@@ -756,7 +756,7 @@ export default function TradingBotSlider() {
                             </div>
 
                             {/* === Panel 3: History (Restructured) === */}
-                            <div className="w-full flex-shrink-0">
+                            <div className="w-full shrink-0">
                                 <div className="space-y-4">
                                     <div className="space-y-2 max-h-[420px] overflow-auto">
                                         {history.map((h,i)=> (

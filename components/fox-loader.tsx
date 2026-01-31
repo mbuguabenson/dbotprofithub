@@ -39,7 +39,7 @@ export function FoxLoader({ progress = 0, status = "Initializing..." }: FoxLoade
       </div>
 
       <div className="text-center">
-        <h3 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+        <h3 className="text-xl font-bold bg-linear-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
           Profit Hub
         </h3>
         <p className="text-xs text-slate-400 font-medium animate-pulse">{status}</p>
@@ -49,7 +49,7 @@ export function FoxLoader({ progress = 0, status = "Initializing..." }: FoxLoade
       <div className="w-48 relative">
         <div className="h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
           <div
-            className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-500 rounded-full"
+            className="h-full bg-linear-to-r from-blue-500 to-cyan-400 transition-all duration-500 rounded-full"
             style={{ width: `${displayProgress}%` }}
           />
         </div>
