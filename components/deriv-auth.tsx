@@ -1,6 +1,6 @@
 "use client"
 
-import { useDerivAuth } from "@/hooks/use-deriv-auth"
+import { useDerivAPI } from "@/lib/deriv-api-context"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
@@ -22,7 +22,7 @@ export function DerivAuth({ theme = "dark" }: DerivAuthProps) {
     accounts,
     switchAccount,
     activeLoginId,
-  } = useDerivAuth()
+  } = useDerivAPI()
 
   const openDerivAccount = () => {
     window.open("https://app.deriv.com/account", "_blank", "noopener,noreferrer")

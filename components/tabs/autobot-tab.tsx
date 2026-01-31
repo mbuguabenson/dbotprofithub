@@ -10,7 +10,6 @@ import { Switch } from "@/components/ui/switch"
 import { Progress } from "@/components/ui/progress"
 import { Play, Square, AlertCircle, AlertTriangle, Activity, DollarSign } from 'lucide-react'
 import { useDerivAPI } from "@/lib/deriv-api-context"
-import { useDerivAuth } from "@/hooks/use-deriv-auth"
 import { AutoBot, type BotStrategy, type AutoBotState, type AutoBotConfig } from "@/lib/autobots"
 import { TickHistoryManager } from "@/lib/tick-history-manager"
 import { derivWebSocket } from "@/lib/deriv-websocket-manager"
@@ -124,8 +123,14 @@ const calculateSuggestedMartingale = (strategy: BotStrategy, stake: number): num
 }
 
 export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
-  const { apiClient, isConnected, isAuthorized, error: apiError } = useDerivAPI()
-  const { accountInfo } = useDerivAuth()
+  const { 
+    apiClient, 
+    isConnected, 
+    isAuthorized, 
+    error: apiError,
+    balance,
+    isLoggedIn 
+  } = useDerivAPI()
 
   const [activeBots, setActiveBots] = useState<Map<BotStrategy, AutoBot>>(new Map())
   const [botStates, setBotStates] = useState<Map<BotStrategy, AutoBotState>>(new Map())
@@ -545,7 +550,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
         cooldownMs: 300,
         maxTradesPerMinute: 120,
         initialStake: validatedStake,
-        balance: accountInfo?.balance || 1000,
+        balance: balance?.amount || 1000,
       }
 
       console.log(`[v0] Starting ${strategy} bot with config:`, autoBotConfig)
@@ -649,7 +654,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
       {(apiError || !isConnected) && (
         <Card className={theme === "dark" ? "bg-red-500/10 border-red-500/30" : "bg-red-50 border-red-200"}>
           <CardContent className="pt-6 flex items-start gap-3">
-            <AlertCircle className={`w-5 h-5 flex-shrink-0 ${theme === "dark" ? "text-red-400" : "text-red-600"}`} />
+            <AlertCircle className={`w-5 h-5 shrink-0 ${theme === "dark" ? "text-red-400" : "text-red-600"}`} />
             <div>
               <p className={`font-semibold ${theme === "dark" ? "text-red-400" : "text-red-700"}`}>Connection Issue</p>
               <p className={`text-sm mt-1 ${theme === "dark" ? "text-red-300" : "text-red-600"}`}>
@@ -663,7 +668,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
       <Card
         className={
           theme === "dark"
-            ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
+            ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
             : "bg-white border-gray-200"
         }
       >
@@ -685,7 +690,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
           <CardContent className="pt-6 flex items-center justify-between">
             <div className="flex items-start gap-3">
               <AlertTriangle
-                className={`w-5 h-5 flex-shrink-0 ${theme === "dark" ? "text-orange-400" : "text-orange-600"}`}
+                className={`w-5 h-5 shrink-0 ${theme === "dark" ? "text-orange-400" : "text-orange-600"}`}
               />
               <div>
                 <p className={`font-semibold ${theme === "dark" ? "text-orange-400" : "text-orange-700"}`}>
@@ -698,7 +703,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
             </div>
             <Button
               onClick={handleEmergencyStopAll}
-              className="bg-red-600 hover:bg-red-700 text-white ml-4 flex-shrink-0"
+              className="bg-red-600 hover:bg-red-700 text-white ml-4 shrink-0"
             >
               🚨 EMERGENCY STOP ALL
             </Button>
@@ -709,7 +714,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
       <Card
         className={
           theme === "dark"
-            ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
+            ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
             : "bg-white border-gray-200"
         }
       >
@@ -764,10 +769,10 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
               className={`${
                 isReady && !isRunning
                   ? theme === "dark"
-                    ? "bg-gradient-to-br from-green-500/20 to-emerald-500/10 border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.4)] animate-pulse"
-                    : "bg-gradient-to-br from-green-50 to-emerald-50 border-green-400"
+                    ? "bg-linear-to-br from-green-500/20 to-emerald-500/10 border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.4)] animate-pulse"
+                    : "bg-linear-to-br from-green-50 to-emerald-50 border-green-400"
                   : theme === "dark"
-                    ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
+                    ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
                     : "bg-white border-gray-200"
               }`}
             >
@@ -1050,7 +1055,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
         <Card
           className={`border ${
             theme === "dark"
-              ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-purple-500/20"
+              ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-purple-500/20"
               : "bg-white border-gray-200"
           }`}
         >
@@ -1145,7 +1150,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
 
       {showTPPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="max-w-md w-full bg-gradient-to-br from-green-900/95 to-emerald-900/95 rounded-2xl border-2 border-green-500 shadow-[0_0_50px_rgba(34,197,94,0.5)] p-8">
+          <div className="max-w-md w-full bg-linear-to-br from-green-900/95 to-emerald-900/95 rounded-2xl border-2 border-green-500 shadow-[0_0_50px_rgba(34,197,94,0.5)] p-8">
             <div className="text-center space-y-4">
               <div className="text-6xl animate-bounce">🎉</div>
               <h2 className="text-3xl font-bold text-white">Congratulations!</h2>

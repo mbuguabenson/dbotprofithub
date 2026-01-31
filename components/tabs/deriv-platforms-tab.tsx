@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { DerivHeader, tabs, type DerivTab } from "@/components/deriv-header"
 import { DerivAuth } from "@/components/deriv-auth"
-import { useDerivAuth } from "@/hooks/use-deriv-auth"
+import { useDerivAPI } from "@/lib/deriv-api-context"
 
 interface DerivPlatformsTabProps {
   theme?: "light" | "dark"
@@ -11,7 +11,7 @@ interface DerivPlatformsTabProps {
 
 export function DerivPlatformsTab({ theme = "dark" }: DerivPlatformsTabProps) {
   const [activeTab, setActiveTab] = useState<DerivTab>(tabs[0])
-  const { token } = useDerivAuth()
+  const { token } = useDerivAPI()
 
   const iframeUrl = token ? `${activeTab.url}&token=${token}` : activeTab.url
 

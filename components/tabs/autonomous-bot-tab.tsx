@@ -6,16 +6,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { AlertCircle, Zap, Target } from "lucide-react"
 import { useDerivAPI } from "@/lib/deriv-api-context"
-import { useDerivAuth } from "@/hooks/use-deriv-auth"
 
 interface AutonomousBotTabProps {
   theme?: "light" | "dark"
+  symbol?: string
 }
 
-export function AutonomousBotTab({ theme = "dark" }: AutonomousBotTabProps) {
+export function AutonomousBotTab({ theme = "dark", symbol }: AutonomousBotTabProps) {
   const [isActive, setIsActive] = useState(false)
-  const { apiClient, isAuthorized } = useDerivAPI()
-  const { token } = useDerivAuth()
+  const { 
+    apiClient, 
+    isConnected, 
+    isAuthorized, 
+    balance,
+    isLoggedIn 
+  } = useDerivAPI()
 
   const [selectedContracts, setSelectedContracts] = useState({
     differs: true,
@@ -190,13 +195,13 @@ export function AutonomousBotTab({ theme = "dark" }: AutonomousBotTabProps) {
       <Card
         className={
           theme === "dark"
-            ? "bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-purple-500/30"
+            ? "bg-linear-to-br from-purple-500/10 to-purple-500/5 border-purple-500/30"
             : "bg-purple-50 border-purple-200"
         }
       >
         <CardContent className="pt-6 flex items-center justify-between">
           <div className="flex items-start gap-3">
-            <Zap className={`w-5 h-5 flex-shrink-0 ${theme === "dark" ? "text-purple-400" : "text-purple-600"}`} />
+            <Zap className={`w-5 h-5 shrink-0 ${theme === "dark" ? "text-purple-400" : "text-purple-600"}`} />
             <div>
               <p className={`font-semibold ${theme === "dark" ? "text-purple-400" : "text-purple-700"}`}>
                 Autonomous Bot 🤖
@@ -225,7 +230,7 @@ export function AutonomousBotTab({ theme = "dark" }: AutonomousBotTabProps) {
       <Card
         className={
           theme === "dark"
-            ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
+            ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
             : "bg-white border-gray-200"
         }
       >
@@ -307,7 +312,7 @@ export function AutonomousBotTab({ theme = "dark" }: AutonomousBotTabProps) {
       <Card
         className={
           theme === "dark"
-            ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
+            ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
             : "bg-white border-gray-200"
         }
       >
@@ -457,7 +462,7 @@ export function AutonomousBotTab({ theme = "dark" }: AutonomousBotTabProps) {
       <Card
         className={
           theme === "dark"
-            ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
+            ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
             : "bg-white border-gray-200"
         }
       >
@@ -540,7 +545,7 @@ export function AutonomousBotTab({ theme = "dark" }: AutonomousBotTabProps) {
       <Card className={theme === "dark" ? "bg-blue-500/10 border-blue-500/30" : "bg-blue-50 border-blue-200"}>
         <CardContent className="pt-6">
           <div className="flex gap-3">
-            <AlertCircle className={`w-5 h-5 flex-shrink-0 ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`} />
+            <AlertCircle className={`w-5 h-5 shrink-0 ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`} />
             <div>
               <p className={`font-semibold ${theme === "dark" ? "text-blue-400" : "text-blue-700"}`}>
                 Autonomous Trading Contracts

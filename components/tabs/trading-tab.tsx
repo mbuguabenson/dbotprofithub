@@ -1,7 +1,6 @@
 "use client"
 import { useCallback, useState, useEffect } from "react"
 import { useDerivAPI } from "@/lib/deriv-api-context"
-import { useDerivAuth } from "@/hooks/use-deriv-auth"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -17,14 +16,17 @@ interface TradingTabProps {
 
 export function TradingTab({ theme: propTheme }: TradingTabProps) {
   const {
+    apiClient,
+    isConnected,
+    isAuthorized,
+    error,
+    connectionStatus,
     token: globalApiToken,
     isLoggedIn,
     balance: globalBalance,
     accountType: globalAccountType,
     accountCode: globalAccountCode,
-  } = useDerivAuth()
-
-  const { apiClient, isConnected, isAuthorized, error, connectionStatus } = useDerivAPI()
+  } = useDerivAPI()
 
   const currentThemeFromProps = propTheme || "dark"
 

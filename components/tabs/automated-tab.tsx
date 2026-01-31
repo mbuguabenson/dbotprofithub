@@ -10,7 +10,6 @@ import { Switch } from "@/components/ui/switch"
 import { Progress } from "@/components/ui/progress"
 import { Play, Square, TrendingUp, TrendingDown, AlertCircle, Loader, AlertTriangle } from "lucide-react"
 import { useDerivAPI } from "@/lib/deriv-api-context"
-import { useDerivAuth } from "@/hooks/use-deriv-auth"
 import { AutoBot, type BotStrategy, type AutoBotState, type AutoBotConfig } from "@/lib/autobots"
 import { DerivWebSocketManager } from "@/lib/deriv-websocket-manager"
 
@@ -71,8 +70,7 @@ const BOT_STRATEGIES: { id: BotStrategy; name: string; description: string }[] =
 ]
 
 export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
-  const { apiClient, isConnected, isAuthorized, error: apiError } = useDerivAPI()
-  const { accountInfo } = useDerivAuth()
+  const { apiClient, isConnected, isAuthorized, error: apiError, balance, isLoggedIn } = useDerivAPI()
   const [marketPrice, setMarketPrice] = useState<number>(0)
   const [selectedStrategy, setSelectedStrategy] = useState<BotStrategy>("EVEN_ODD")
   const [bot, setBot] = useState<AutoBot | null>(null)
@@ -94,7 +92,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
     cooldownMs: 300,
     maxTradesPerMinute: 120,
     initialStake: 0.35,
-    balance: accountInfo?.balance || 1000,
+    balance: balance?.amount || 1000,
   })
 
   useEffect(() => {
@@ -112,10 +110,10 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
   }, [symbol])
 
   useEffect(() => {
-    if (accountInfo?.balance) {
-      setConfig((prev) => ({ ...prev, balance: accountInfo.balance }))
+    if (balance?.amount) {
+      setConfig((prev) => ({ ...prev, balance: balance.amount }))
     }
-  }, [accountInfo])
+  }, [balance])
 
   useEffect(() => {
     if (emergencyStop && bot) {
@@ -242,7 +240,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
       {(apiError || localError || !isConnected) && (
         <Card className={theme === "dark" ? "bg-red-500/10 border-red-500/30" : "bg-red-50 border-red-200"}>
           <CardContent className="pt-6 flex items-start gap-3">
-            <AlertCircle className={`w-5 h-5 flex-shrink-0 ${theme === "dark" ? "text-red-400" : "text-red-600"}`} />
+            <AlertCircle className={`w-5 h-5 shrink-0 ${theme === "dark" ? "text-red-400" : "text-red-600"}`} />
             <div>
               <p className={`font-semibold ${theme === "dark" ? "text-red-400" : "text-red-700"}`}>Connection Issue</p>
               <p className={`text-sm mt-1 ${theme === "dark" ? "text-red-300" : "text-red-600"}`}>
@@ -259,7 +257,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
           <CardContent className="pt-6 flex items-center justify-between">
             <div className="flex items-start gap-3">
               <AlertTriangle
-                className={`w-5 h-5 flex-shrink-0 ${theme === "dark" ? "text-orange-400" : "text-orange-600"}`}
+                className={`w-5 h-5 shrink-0 ${theme === "dark" ? "text-orange-400" : "text-orange-600"}`}
               />
               <div>
                 <p className={`font-semibold ${theme === "dark" ? "text-orange-400" : "text-orange-700"}`}>
@@ -272,7 +270,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
             </div>
             <Button
               onClick={() => setEmergencyStop(true)}
-              className="bg-red-600 hover:bg-red-700 text-white ml-4 flex-shrink-0"
+              className="bg-red-600 hover:bg-red-700 text-white ml-4 shrink-0"
             >
               🚨 Emergency Stop
             </Button>
@@ -284,7 +282,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
       <Card
         className={
           theme === "dark"
-            ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
+            ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
             : "bg-white border-gray-200"
         }
       >
@@ -311,7 +309,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
       <Card
         className={
           theme === "dark"
-            ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
+            ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
             : "bg-white border-gray-200"
         }
       >
@@ -353,7 +351,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
       <Card
         className={
           theme === "dark"
-            ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
+            ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
             : "bg-white border-gray-200"
         }
       >
@@ -476,7 +474,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
         <Card
           className={
             theme === "dark"
-              ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
+              ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
               : "bg-white border-gray-200"
           }
         >
@@ -570,7 +568,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
             <Card
               className={
                 theme === "dark"
-                  ? "bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/30"
+                  ? "bg-linear-to-br from-blue-500/10 to-blue-500/5 border-blue-500/30"
                   : "bg-blue-50 border-blue-200"
               }
             >
@@ -593,10 +591,10 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
               className={
                 botState.profitLoss >= 0
                   ? theme === "dark"
-                    ? "bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/30"
+                    ? "bg-linear-to-br from-green-500/10 to-green-500/5 border-green-500/30"
                     : "bg-green-50 border-green-200"
                   : theme === "dark"
-                    ? "bg-gradient-to-br from-red-500/10 to-red-500/5 border-red-500/30"
+                    ? "bg-linear-to-br from-red-500/10 to-red-500/5 border-red-500/30"
                     : "bg-red-50 border-red-200"
               }
             >
@@ -629,7 +627,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
             <Card
               className={
                 theme === "dark"
-                  ? "bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-purple-500/30"
+                  ? "bg-linear-to-br from-purple-500/10 to-purple-500/5 border-purple-500/30"
                   : "bg-purple-50 border-purple-200"
               }
             >
@@ -651,7 +649,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
             <Card
               className={
                 theme === "dark"
-                  ? "bg-gradient-to-br from-orange-500/10 to-orange-500/5 border-orange-500/30"
+                  ? "bg-linear-to-br from-orange-500/10 to-orange-500/5 border-orange-500/30"
                   : "bg-orange-50 border-orange-200"
               }
             >
@@ -675,7 +673,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
           <Card
             className={
               theme === "dark"
-                ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
+                ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
                 : "bg-white border-gray-200"
             }
           >
@@ -717,7 +715,7 @@ export function AutoBotTab({ theme = "dark", symbol }: AutoBotTabProps) {
           <Card
             className={
               theme === "dark"
-                ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
+                ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
                 : "bg-white border-gray-200"
             }
           >

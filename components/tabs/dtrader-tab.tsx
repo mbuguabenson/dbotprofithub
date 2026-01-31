@@ -1,6 +1,6 @@
 "use client"
 
-import { useDerivAuth } from "@/hooks/use-deriv-auth"
+import { useDerivAPI } from "@/lib/deriv-api-context"
 import { DerivAuth } from "@/components/deriv-auth"
 import { DERIV_CONFIG } from "@/lib/deriv-config"
 import { PlatformLauncher } from "@/components/platform-launcher"
@@ -11,7 +11,7 @@ interface DTraderTabProps {
 }
 
 export function DTraderTab({ theme = "dark" }: DTraderTabProps) {
-  const { token, isLoggedIn } = useDerivAuth()
+  const { token, isLoggedIn } = useDerivAPI()
 
   const dtraderUrl = token
     ? `https://app.deriv.com/dtrader?app_id=${DERIV_CONFIG.APP_ID}&token1=${token}`

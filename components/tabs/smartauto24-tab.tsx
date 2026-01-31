@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react"
 import { useDerivAPI } from "@/lib/deriv-api-context"
-import { useDerivAuth } from "@/hooks/use-deriv-auth"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -41,8 +40,15 @@ interface BotStats {
 }
 
 export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
-  const { apiClient, isConnected, isAuthorized } = useDerivAPI()
-  const { balance, isLoggedIn, submitApiToken, token } = useDerivAuth()
+  const { 
+    apiClient, 
+    isConnected, 
+    isAuthorized, 
+    balance, 
+    isLoggedIn, 
+    submitApiToken, 
+    token 
+  } = useDerivAPI()
 
   const [apiTokenInput, setApiTokenInput] = useState("")
   const [showToken, setShowToken] = useState(false)
@@ -665,8 +671,8 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
         <Card
           className={`p-6 border ${
             theme === "dark"
-              ? "bg-gradient-to-r from-red-500/20 via-orange-500/20 to-yellow-500/20 border-red-500/30"
-              : "bg-gradient-to-r from-red-50 to-orange-50 border-red-200"
+              ? "bg-linear-to-r from-red-500/20 via-orange-500/20 to-yellow-500/20 border-red-500/30"
+              : "bg-linear-to-r from-red-50 to-orange-50 border-red-200"
           }`}
         >
           <div className="flex items-center justify-between mb-4">
@@ -715,7 +721,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
               onClick={() => handleConnectToken()}
               className={`w-full ${
                 theme === "dark"
-                  ? "bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black font-bold"
+                  ? "bg-linear-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black font-bold"
                   : "bg-yellow-500 hover:bg-yellow-600 text-white font-bold"
               }`}
             >
@@ -729,8 +735,8 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
           <Card
             className={`p-6 border ${
               theme === "dark"
-                ? "bg-gradient-to-r from-green-500/20 via-emerald-500/20 to-teal-500/20 border-green-500/30"
-                : "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200"
+                ? "bg-linear-to-r from-green-500/20 via-emerald-500/20 to-teal-500/20 border-green-500/30"
+                : "bg-linear-to-r from-green-50 to-emerald-50 border-green-200"
             }`}
           >
             <div className="flex items-center justify-between">
@@ -759,8 +765,8 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
             <Card
               className={`p-6 border ${
                 theme === "dark"
-                  ? "bg-gradient-to-r from-blue-500/20 via-cyan-500/20 to-teal-500/20 border-blue-500/30"
-                  : "bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200"
+                  ? "bg-linear-to-r from-blue-500/20 via-cyan-500/20 to-teal-500/20 border-blue-500/30"
+                  : "bg-linear-to-r from-blue-50 to-cyan-50 border-blue-200"
               }`}
             >
               <div className="flex items-center justify-between">
@@ -790,7 +796,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
             <Card
               className={`p-6 border ${
                 theme === "dark"
-                  ? "bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30"
+                  ? "bg-linear-to-br from-purple-500/20 to-pink-500/20 border-purple-500/30"
                   : "bg-purple-50 border-purple-200"
               }`}
             >
@@ -866,7 +872,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
           <Card
             className={`p-6 border ${
               theme === "dark"
-                ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-yellow-500/20"
+                ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-yellow-500/20"
                 : "bg-white border-gray-200"
             }`}
           >
@@ -1079,7 +1085,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
                 disabled={isRunning || !isLoggedIn || loadingMarkets}
                 className={`flex-1 ${
                   theme === "dark"
-                    ? "bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black font-bold"
+                    ? "bg-linear-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black font-bold"
                     : "bg-yellow-500 hover:bg-yellow-600 text-white font-bold"
                 }`}
               >
@@ -1104,7 +1110,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
             <Card
               className={`p-6 border ${
                 theme === "dark"
-                  ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-yellow-500/20"
+                  ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-yellow-500/20"
                   : "bg-white border-gray-200"
               }`}
             >
@@ -1125,7 +1131,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
                   className={`w-full h-4 rounded-full overflow-hidden ${theme === "dark" ? "bg-gray-700" : "bg-gray-200"}`}
                 >
                   <div
-                    className="h-full bg-gradient-to-r from-yellow-500 to-amber-500 transition-all duration-300"
+                    className="h-full bg-linear-to-r from-yellow-500 to-amber-500 transition-all duration-300"
                     style={{ width: `${analysisProgress}%` }}
                   />
                 </div>
@@ -1169,7 +1175,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
             <Card
               className={`p-6 border ${
                 theme === "dark"
-                  ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-purple-500/20"
+                  ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-purple-500/20"
                   : "bg-white border-gray-200"
               }`}
             >
@@ -1188,7 +1194,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
                   </div>
                   <div className={`w-full h-3 rounded-full overflow-hidden ${theme === "dark" ? "bg-gray-700" : "bg-gray-200"}`}>
                     <div
-                      className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-300"
+                      className="h-full bg-linear-to-r from-green-500 to-emerald-500 transition-all duration-300"
                       style={{ width: `${Math.min(100, stats.winRate)}%` }}
                     />
                   </div>
@@ -1204,7 +1210,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
                   </div>
                   <div className={`w-full h-3 rounded-full overflow-hidden ${theme === "dark" ? "bg-gray-700" : "bg-gray-200"}`}>
                     <div
-                      className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 transition-all duration-300"
+                      className="h-full bg-linear-to-r from-blue-500 to-cyan-500 transition-all duration-300"
                       style={{ width: `${Math.min(100, analysisData.power)}%` }}
                     />
                   </div>
@@ -1220,7 +1226,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
                   </div>
                   <div className={`w-full h-3 rounded-full overflow-hidden ${theme === "dark" ? "bg-gray-700" : "bg-gray-200"}`}>
                     <div
-                      className={`h-full transition-all duration-300 ${sessionProfit >= 0 ? "bg-gradient-to-r from-green-500 to-emerald-500" : "bg-gradient-to-r from-red-500 to-orange-500"}`}
+                      className={`h-full transition-all duration-300 ${sessionProfit >= 0 ? "bg-linear-to-r from-green-500 to-emerald-500" : "bg-linear-to-r from-red-500 to-orange-500"}`}
                       style={{ width: `${Math.min(100, Math.abs((sessionProfit / Number.parseFloat(targetProfit)) * 100))}%` }}
                     />
                   </div>
@@ -1281,7 +1287,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
             <Card
               className={`p-6 border ${
                 theme === "dark"
-                  ? "bg-gradient-to-br from-green-500/10 to-green-500/10 border-green-500/30"
+                  ? "bg-linear-to-br from-green-500/10 to-green-500/10 border-green-500/30"
                   : "bg-green-50 border-green-200"
               }`}
             >
@@ -1296,7 +1302,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
             <Card
               className={`p-6 border ${
                 theme === "dark"
-                  ? "bg-gradient-to-br from-blue-500/10 to-blue-500/10 border-blue-500/30"
+                  ? "bg-linear-to-br from-blue-500/10 to-blue-500/10 border-blue-500/30"
                   : "bg-blue-50 border-blue-200"
               }`}
             >
@@ -1309,7 +1315,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
             <Card
               className={`p-6 border ${
                 theme === "dark"
-                  ? "bg-gradient-to-br from-yellow-500/10 to-yellow-500/10 border-yellow-500/30"
+                  ? "bg-linear-to-br from-yellow-500/10 to-yellow-500/10 border-yellow-500/30"
                   : "bg-yellow-50 border-yellow-200"
               }`}
             >
@@ -1325,7 +1331,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
       {/* Stop Loss Popup */}
       {showSLPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="max-w-md w-full bg-gradient-to-br from-red-900/95 to-red-800/95 rounded-2xl border-2 border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.5)] p-8">
+          <div className="max-w-md w-full bg-linear-to-br from-red-900/95 to-red-800/95 rounded-2xl border-2 border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.5)] p-8">
             <div className="text-center space-y-4">
               <div className="text-6xl">😢</div>
               <h2 className="text-3xl font-bold text-white">Oops!</h2>
@@ -1364,7 +1370,7 @@ export function SmartAuto24Tab({ theme }: { theme: "light" | "dark" }) {
       {/* Take Profit Popup */}
       {showTPPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="max-w-md w-full bg-gradient-to-br from-green-900/95 to-green-800/95 rounded-2xl border-2 border-green-500 shadow-[0_0_50px_rgba(34,197,94,0.5)] p-8">
+          <div className="max-w-md w-full bg-linear-to-br from-green-900/95 to-green-800/95 rounded-2xl border-2 border-green-500 shadow-[0_0_50px_rgba(34,197,94,0.5)] p-8">
             <div className="text-center space-y-4">
               <div className="text-6xl">🎉</div>
               <h2 className="text-3xl font-bold text-white">Congratulations!</h2>

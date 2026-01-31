@@ -7,21 +7,39 @@ import { DerivAPIClient } from "./deriv-api"
 import { DERIV_APP_ID } from "./deriv-config"
 import { useDerivAuth } from "@/hooks/use-deriv-auth"
 
+interface Balance {
+  amount: number
+  currency: string
+}
+
+interface Account {
+  id: string
+  type: "Demo" | "Real"
+  currency: string
+}
+
 interface DerivAPIContextType {
   apiClient: DerivAPIClient | null
   isConnected: boolean
   isAuthorized: boolean
   error: string | null
   connectionStatus: "disconnected" | "connecting" | "connected" | "reconnecting"
+  // Auth properties from useDerivAuth
+  token: string
+  isLoggedIn: boolean
+  balance: Balance | null
+  accountType: "Demo" | "Real" | null
+  accountCode: string
+  accounts: Account[]
+  activeLoginId: string | null
+  logout: () => void
+  requestLogin: () => void
+  switchAccount: (loginId: string) => void
+  submitApiToken: (token: string) => void
+  openTokenSettings: () => void
 }
 
-const DerivAPIContext = createContext<DerivAPIContextType>({
-  apiClient: null,
-  isConnected: false,
-  isAuthorized: false,
-  error: null,
-  connectionStatus: "disconnected",
-})
+const DerivAPIContext = createContext<DerivAPIContextType | null>(null)
 
 let globalAPIClient: DerivAPIClient | null = null
 
@@ -34,41 +52,32 @@ export function DerivAPIProvider({ children }: { children: React.ReactNode }) {
   >("disconnected")
   const clientRef = useRef<DerivAPIClient | null>(null)
   const initAttemptRef = useRef(0)
-  const { token, isLoggedIn } = useDerivAuth()
+  const auth = useDerivAuth()
+  const { token, isLoggedIn } = auth
 
   useEffect(() => {
     if (token && isLoggedIn && token.length > 10) {
-      if (!globalAPIClient) {
-        console.log("[v0] Initializing DerivAPIClient with token")
+      if (!globalAPIClient || globalAPIClient.token !== token) {
+        console.log("[v0] Initializing/Updating DerivAPIClient with token")
+        
+        if (globalAPIClient) {
+            globalAPIClient.disconnect()
+        }
+
         globalAPIClient = new DerivAPIClient({ appId: DERIV_APP_ID.toString(), token })
         globalAPIClient.setErrorCallback((err) => {
           const errorMessage = err?.message || (typeof err === 'string' ? err : 'Unknown API Error');
-          const errorCode = err?.code || 'No code';
-          
-          console.error("[v0] ❌ API Error Detected:");
-          console.error(" > Message:", errorMessage);
-          console.error(" > Code:", errorCode);
-          console.error(" > Full Error Object:", err);
-          
           setError(errorMessage)
         })
 
         const attemptConnection = async () => {
           try {
             initAttemptRef.current++
-            console.log(`[v0] Connection attempt ${initAttemptRef.current}`)
             setConnectionStatus("connecting")
 
             await globalAPIClient!.connect()
-            console.log("[v0] WebSocket connected, allowing stabilization...")
-            
-            // Wait for connection to fully stabilize
             await new Promise(resolve => setTimeout(resolve, 500))
-            
-            console.log("[v0] WebSocket stabilized, attempting authorization...")
-
             await globalAPIClient!.authorize(token)
-            console.log("[v0] Authorization successful")
 
             setIsConnected(true)
             setIsAuthorized(true)
@@ -81,11 +90,9 @@ export function DerivAPIProvider({ children }: { children: React.ReactNode }) {
 
             if (initAttemptRef.current < 10) {
               const delay = Math.min(1000 * Math.pow(1.5, initAttemptRef.current), 15000)
-              console.log(`[v0] Reconnecting in ${delay}ms...`)
               setTimeout(attemptConnection, delay)
             } else {
-              console.error("[v0] Max connection attempts reached")
-              setError("Failed to connect to API after 10 attempts. Please check your API token.")
+              setError("Failed to connect to API after 10 attempts.")
               setConnectionStatus("disconnected")
             }
           }
@@ -108,11 +115,9 @@ export function DerivAPIProvider({ children }: { children: React.ReactNode }) {
         if (connected && authorized && error) {
           setError(null)
           setConnectionStatus("connected")
-        } else if (!connected) {
-          setConnectionStatus("disconnected")
         }
       }
-    }, 250)
+    }, 500)
 
     return () => {
       clearInterval(interval)
@@ -127,6 +132,7 @@ export function DerivAPIProvider({ children }: { children: React.ReactNode }) {
         isAuthorized,
         error,
         connectionStatus,
+        ...auth,
       }}
     >
       {children}
@@ -137,7 +143,27 @@ export function DerivAPIProvider({ children }: { children: React.ReactNode }) {
 export function useDerivAPI() {
   const context = useContext(DerivAPIContext)
   if (!context) {
-    throw new Error("useDerivAPI must be used within DerivAPIProvider")
+    // Return a dummy context to avoid crashing, but warn
+    console.error("useDerivAPI must be used within DerivAPIProvider")
+    return {
+      apiClient: null,
+      isConnected: false,
+      isAuthorized: false,
+      error: "Context not found",
+      connectionStatus: "disconnected",
+      token: "",
+      isLoggedIn: false,
+      balance: null,
+      accountType: null,
+      accountCode: "",
+      accounts: [],
+      activeLoginId: null,
+      logout: () => {},
+      requestLogin: () => {},
+      switchAccount: () => {},
+      submitApiToken: () => {},
+      openTokenSettings: () => {},
+    } as DerivAPIContextType
   }
   return context
 }

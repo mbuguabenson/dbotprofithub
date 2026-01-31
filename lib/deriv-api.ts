@@ -102,6 +102,14 @@ export class DerivAPIClient {
     this.setupListeners()
   }
 
+  get token() {
+    return this.config.token
+  }
+
+  async call(request: any): Promise<any> {
+    return this.send(request)
+  }
+
   private setupListeners() {
     this.manager.on("*", (data: any) => {
       this.handleMessage(data)
